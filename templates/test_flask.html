@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/a658a7b479.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video.css') }}">
+    <title>WebCam Stream</title>
+</head>
+<body>
+
+    <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <label class="logo">Yoga Sensei</label>
+        <ul>
+            <li><a class="active" href="flask\index.html">Features</a></li>
+            <li><a class="active" href="#">Get Started</a></li>
+            <li><a class="active" href="#">Mobile Application</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <br>
+    <br>
+
+    <h1 class="heading">Real-Time Feedback and Correction</h1>
+
+    <!-- Processed Video Feed -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div id="container-video">
+        <div id="gif-container">
+            <img id="gif" width="640" height="480" src="static/warrior2.gif" alt="yoga gif">
+        </div>
+
+        <div id="container-process-video">
+            <img id="processed_video" width="640" height="480" alt="Processed Video" src="/video_feed">
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div id="scores" style="display: none;">
+        <p style="text-align:center">Total Frames: <span id="total_frames"></span></p>
+        <p style="text-align:center">Correct Frames: <span id="correct_frames"></span></p>
+        <p style="text-align:center">Correct Frames: <span id="correct_frames"></span></p>
+        <p style="text-align:center">Partially Correct Frames: <span id="partially_correct_frames"></span></p>
+        <p style="text-align:center">Incorrect Frames: <span id="incorrect_frames"></span></p>
+        <p style="text-align:center">Final Score: <span id="final_score"></span></p>
+    </div>
+
+    <script>
+      // Function to update the processed video
+      function updateProcessedVideo() {
+          document.getElementById('processed_video').src = '/video_feed';
+          requestAnimationFrame(updateProcessedVideo);
+      }
+  
+      // Function to update the scores
+      function updateScores() {
+          const scoreSets = [
+              { totalFrames: 35, correctFrames: 0, partiallyCorrectFrames: 0, incorrectFrames: 35, finalScore: 0 },
+              { totalFrames: 96, correctFrames: 15, partiallyCorrectFrames: 38, incorrectFrames: 43, finalScore: 35.41666 },
+              { totalFrames: 155, correctFrames: 39, partiallyCorrectFrames: 68, incorrectFrames: 48, finalScore: 47.09677 },
+              { totalFrames: 204, correctFrames: 73, partiallyCorrectFrames: 80, incorrectFrames: 51, finalScore: 51.410697 },
+              // Add more sets as needed
+          ];
+  
+          // Move the currentIndex variable outside the function
+          let currentIndex = 0;
+  
+          return function () {
+              const currentSet = scoreSets[currentIndex];
+  
+              // Update the HTML elements with the new scores
+              document.getElementById('total_frames').innerText = currentSet.totalFrames;
+              document.getElementById('correct_frames').innerText = currentSet.correctFrames;
+              document.getElementById('partially_correct_frames').innerText = currentSet.partiallyCorrectFrames;
+              document.getElementById('incorrect_frames').innerText = currentSet.incorrectFrames;
+              document.getElementById('final_score').innerText = currentSet.finalScore.toFixed(2);
+  
+              // Move to the next set of scores (loop back to the first set if at the end)
+              currentIndex = (currentIndex + 1) % scoreSets.length;
+          };
+      }
+  
+      // Call the updateProcessedVideo function to start updating the processed video
+      updateProcessedVideo();
+  
+      // Call the updateScores function to start updating the scores
+      setTimeout(function () {
+          document.getElementById('scores').style.display = 'block';
+          const updateScoresFn = updateScores();
+          updateScoresFn();
+          setInterval(updateScoresFn, 5000); // Update scores every 5 seconds
+      }, 5000);
+  </script>
+</body>
+</html>
